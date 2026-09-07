@@ -43,15 +43,17 @@
 
     <section>
       <h2>Formulaire de contact</h2>
-      <form>
+      <form action="https://formspree.io/f/xljepagv" method="POST">
+        <input type="hidden" name="_subject" value="Nouveau message depuis le site Obria Solutions">
+
         <label for="nom">Nom</label>
-        <input type="text" id="nom" name="nom">
+        <input type="text" id="nom" name="nom" required>
 
         <label for="courriel">Courriel</label>
-        <input type="email" id="courriel" name="courriel">
+        <input type="email" id="courriel" name="courriel" required>
 
         <label for="message">Message</label>
-        <textarea id="message" name="message"></textarea>
+        <textarea id="message" name="message" required></textarea>
 
         <button type="submit">Envoyer</button>
       </form>
