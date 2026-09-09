@@ -1,13 +1,23 @@
-let menuOuvert = false;
 const bouton = document.querySelector("#menuBtn");
-const statut = document.querySelector("#statutMenu");
+const menu = document.querySelector("nav");
 
-bouton.addEventListener("click", function() {
-  menuOuvert = !menuOuvert;
+if (bouton) {
+  bouton.addEventListener("click", function() {
+    menu.classList.toggle("menu-ouvert");
+  });
+}
 
-  if (menuOuvert) {
-    statut.textContent = "Menu ouvert";
-  } else {
-    statut.textContent = "Menu fermé";
-  }
-});
+const formulaire = document.querySelector("form");
+const message = document.querySelector("#message");
+const erreurMessage = document.querySelector("#erreurMessage");
+
+if (formulaire) {
+  formulaire.addEventListener("submit", function(event) {
+    if (message.value.length < 10) {
+      event.preventDefault();
+      erreurMessage.textContent = "Ton message doit contenir au moins 10 caractères.";
+    } else {
+      erreurMessage.textContent = "";
+    }
+  });
+}

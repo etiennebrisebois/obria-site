@@ -34,6 +34,10 @@ header nav a {
   text-decoration: none;
 }
 
+#menuBtn {
+  display: none;
+}
+
 .valeurs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -137,5 +141,16 @@ form button {
   .equipe,
   .appropublic {
     grid-template-columns: 1fr;
+  }
+  #menuBtn {
+  display: block;
+  }
+
+  nav a {
+  display: none;
+  }
+
+  nav.menu-ouvert a {
+  display: block;
   }
 }
