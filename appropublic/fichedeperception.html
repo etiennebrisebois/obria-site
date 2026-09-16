@@ -6,7 +6,7 @@
 <title>Fiche de perception — ApproPublic</title>
 <meta name="description" content="Grille d'entrevue pour recueillir, auprès d'organismes publics, la perception de valeur des fonctionnalités ApproPublic et de la vision Apprové.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
   :root {
     --bg: #F4F7FA;
@@ -26,6 +26,7 @@
     --scale-4: #0D2A4A;
     --scale-1-ink: #33475A;
     --scale-4-ink: #FFFFFF;
+    --grid-line: rgba(13,42,74,0.09);
     --shadow: 0 1px 2px rgba(13,42,74,0.06), 0 8px 24px -12px rgba(13,42,74,0.18);
   }
   @media (prefers-color-scheme: dark) {
@@ -47,6 +48,7 @@
       --scale-4: #6BA6E8;
       --scale-1-ink: #C3D3E0;
       --scale-4-ink: #061019;
+      --grid-line: rgba(233,241,248,0.08);
       --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
     }
   }
@@ -68,6 +70,7 @@
     --scale-4: #6BA6E8;
     --scale-1-ink: #C3D3E0;
     --scale-4-ink: #061019;
+    --grid-line: rgba(233,241,248,0.08);
     --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
   }
 
@@ -80,6 +83,22 @@
     padding-inline: 16px;
     padding-block: 28px;
     margin: 0;
+    position: relative;
+  }
+  /* Motif quadrillé repris de la présentation — discret, en haut à droite, s'estompe vers le centre */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; right: 0;
+    width: min(46vw, 520px);
+    height: min(46vw, 520px);
+    background-image:
+      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 28px);
+    -webkit-mask-image: radial-gradient(circle at top right, black 0%, black 35%, transparent 72%);
+            mask-image: radial-gradient(circle at top right, black 0%, black 35%, transparent 72%);
+    pointer-events: none;
+    z-index: 0;
   }
   h1, h2, h3 {
     font-family: "Source Serif Pro", Georgia, serif;
@@ -88,29 +107,43 @@
     text-wrap: balance;
     margin: 0;
   }
-  .page { max-width: 760px; margin: 0 auto; }
+  .page { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
 
   /* ---------- Masthead ---------- */
   .masthead {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    gap: 16px;
     padding-bottom: 22px;
     border-bottom: 2px solid var(--ink);
     margin-bottom: 24px;
   }
-  .brandmark {
-    flex: none;
-    width: 46px; height: 46px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 3px;
-    border-radius: 8px;
-    overflow: hidden;
+  .masthead-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
   }
-  .brandmark span { background: var(--ink); }
-  .brandmark span:nth-child(4) { background: var(--sarcelle); }
+  .logo-lockup { display: flex; align-items: center; gap: 10px; }
+  .brandmark { flex: none; width: 44px; height: 44px; display: block; }
+  .logo-word {
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  #qr-box {
+    flex: none;
+    width: 64px; height: 64px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: var(--shadow);
+  }
+  #qr-box img, #qr-box canvas, #qr-box table { width: 100% !important; height: 100% !important; }
   .eyebrow {
     margin: 0 0 4px;
     font-size: 12px;
@@ -119,7 +152,7 @@
     text-transform: uppercase;
     color: var(--accent);
   }
-  .masthead h1 { font-size: 26px; }
+  .masthead-title h1 { font-size: 24px; }
   .lede { margin: 8px 0 0; color: var(--muted); font-size: 14.5px; max-width: 58ch; }
 
   /* ---------- Meta card ---------- */
@@ -130,11 +163,11 @@
     padding: 18px 20px;
     box-shadow: var(--shadow);
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 14px 18px;
     margin-bottom: 22px;
   }
-  @media (max-width: 520px) { .meta-card { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .meta-card { grid-template-columns: 1fr; } }
   .field { display: flex; flex-direction: column; gap: 5px; }
   .field label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
   .field input, .field select, textarea {
@@ -150,28 +183,29 @@
     outline-offset: 1px;
   }
 
-  /* ---------- Tabs ---------- */
-  .tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 18px;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
+  /* ---------- Stepper ---------- */
+  .stepper { margin-bottom: 18px; }
+  .stepper-hint { font-size: 12.5px; color: var(--muted); font-weight: 500; margin: 0 0 12px; }
+  .steps { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .step {
+    display: flex; align-items: center; gap: 8px;
+    background: none; border: none; font: inherit; cursor: pointer;
+    padding: 6px 6px 6px 2px; border-radius: 8px;
   }
-  .tab {
-    font: inherit;
-    font-weight: 600;
-    font-size: 13.5px;
-    color: var(--muted);
-    background: none;
-    border: none;
-    padding: 10px 6px 12px;
-    cursor: pointer;
-    border-bottom: 2.5px solid transparent;
-    margin-bottom: -1px;
+  .step:hover .step-label { color: var(--ink); }
+  .step-num {
+    flex: none; width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    background: var(--surface-2); color: var(--muted);
+    border: 1.5px solid var(--border);
   }
-  .tab.active { color: var(--ink); border-color: var(--accent); }
-  .tab:hover { color: var(--ink); }
+  .step-label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+  .step.active .step-num { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+  .step.active .step-label { color: var(--ink); }
+  .step.visited:not(.active) .step-num { background: var(--sarcelle-soft); border-color: var(--sarcelle); color: var(--sarcelle); }
+  .step.visited:not(.active) .step-num::after { content: "✓"; }
+  .step-line { flex: 1 1 20px; min-width: 14px; max-width: 46px; height: 2px; background: var(--border); }
 
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
@@ -269,17 +303,9 @@
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
   }
   .vision-banner p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
   .vision-banner strong { color: var(--sarcelle); }
-  .print-toggle {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12.5px; font-weight: 600; color: var(--ink);
-    cursor: pointer;
-  }
 
   /* ---------- Conclusion ---------- */
   .tab-panel h2 { font-size: 18px; margin: 22px 0 6px; }
@@ -366,38 +392,6 @@
     color: var(--muted);
   }
 
-  .meta-note {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    background: var(--accent-soft);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    margin: -6px 0 20px;
-  }
-  .meta-note strong { color: var(--ink); }
-
-  .qr-strip {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 18px;
-    box-shadow: var(--shadow);
-    margin-bottom: 22px;
-  }
-  .qr-box { flex: none; width: 76px; height: 76px; background: #fff; border-radius: 6px; padding: 4px; }
-  .qr-box img, .qr-box canvas, .qr-box table { width: 100% !important; height: 100% !important; }
-  .qr-text p { margin: 0; }
-  .qr-title { font-size: 13px; font-weight: 700; color: var(--ink); }
-  .qr-sub { font-size: 12px; color: var(--muted); margin-top: 3px !important; }
-  .qr-sub code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 11.5px; color: var(--accent); word-break: break-all; }
-
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: var(--ink); color: var(--surface);
@@ -410,11 +404,11 @@
   /* ---------- Print ---------- */
   @media print {
     body { padding: 0; background: white; }
+    body::before { display: none !important; }
     .no-print { display: none !important; }
-    .tabs { display: none !important; }
+    .stepper { display: none !important; }
     .tab-panel { display: block !important; page-break-before: always; }
     .tab-panel:first-of-type { page-break-before: avoid; }
-    #tab-vision.print-off { display: none !important; }
     .feature, .meta-card, .summary-panel { box-shadow: none; break-inside: avoid; }
     a.btn { display: none !important; }
   }
@@ -424,10 +418,16 @@
 <div class="page">
 
   <header class="masthead">
-    <div class="brandmark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-    <div>
+    <div class="masthead-top">
+      <div class="logo-lockup">
+        <img class="brandmark" src="img/logo.png" alt="ApproPublic" width="44" height="44">
+        <span class="logo-word">ApproPublic</span>
+      </div>
+      <div id="qr-box" role="img" aria-label="Code QR vers cette page"></div>
+    </div>
+    <div class="masthead-title">
       <p class="eyebrow">Obria Solutions</p>
-      <h1>Fiche de perception — ApproPublic</h1>
+      <h1>Fiche de perception</h1>
       <p class="lede">À compléter à la suite d'une rencontre exploratoire, pour identifier les fonctionnalités qui suscitent le plus d'intérêt auprès des organismes publics.</p>
     </div>
   </header>
@@ -436,32 +436,23 @@
     <div class="field"><label for="f-org">Organisme public</label><input id="f-org" type="text" placeholder="Ex. Ville de ___"></div>
     <div class="field"><label for="f-contact">Nom et poste du participant</label><input id="f-contact" type="text" placeholder="Ex. J. Tremblay, directrice des approvisionnements"></div>
     <div class="field"><label for="f-date">Date de la rencontre</label><input id="f-date" type="date"></div>
-    <div class="field"><label for="f-taille">Volume approximatif de contrats / an</label>
-      <select id="f-taille">
-        <option value="">—</option>
-        <option>Moins de 25 000 $ à 250 000 $</option>
-        <option>250 000 $ à 1 M$</option>
-        <option>1 M$ à 10 M$</option>
-        <option>Plus de 10 M$</option>
-        <option>Ne sait pas / à confirmer</option>
-      </select>
-    </div>
   </section>
 
-  <p class="meta-note no-print">💡 <span>Plusieurs personnes présentes à la rencontre ? Imprimez une copie par participant — le couple <strong>Organisme + Date</strong> permet de les regrouper automatiquement dans la grille de compilation.</span></p>
-
-  <div class="qr-strip">
-    <div class="qr-box" id="qr-box"></div>
-    <div class="qr-text">
-      <p class="qr-title">Pas le temps de terminer aujourd'hui ?</p>
-      <p class="qr-sub">Scannez ce code pour poursuivre en ligne, ou visitez <code id="qr-url-text"></code></p>
+  <nav class="stepper no-print" aria-label="Sections">
+    <p class="stepper-hint">Complétez les 3 sections ci-dessous, puis soumettez votre fiche à la fin.</p>
+    <div class="steps">
+      <button class="step active" data-tab="tab-fiche" type="button">
+        <span class="step-num">1</span><span class="step-label">Fonctionnalités ApproPublic</span>
+      </button>
+      <span class="step-line" aria-hidden="true"></span>
+      <button class="step" data-tab="tab-vision" type="button">
+        <span class="step-num">2</span><span class="step-label">Vision Apprové</span>
+      </button>
+      <span class="step-line" aria-hidden="true"></span>
+      <button class="step" data-tab="tab-conclusion" type="button">
+        <span class="step-num">3</span><span class="step-label">Priorités et conclusion</span>
+      </button>
     </div>
-  </div>
-
-  <nav class="tabs no-print" aria-label="Sections">
-    <button class="tab active" data-tab="tab-fiche" type="button">1 · Fonctionnalités ApproPublic</button>
-    <button class="tab" data-tab="tab-vision" type="button">2 · Vision Apprové</button>
-    <button class="tab" data-tab="tab-conclusion" type="button">3 · Priorités et conclusion</button>
   </nav>
 
   <section id="tab-fiche" class="tab-panel active">
@@ -472,7 +463,6 @@
   <section id="tab-vision" class="tab-panel">
     <div class="vision-banner">
       <p><strong>Distinct d'ApproPublic.</strong> Apprové est un produit futur d'Obria Solutions, dédié à la gestion opérationnelle complète des contrats publics — il n'est pas en développement actif. Cette section sert uniquement à mesurer l'intérêt pour cette vision à plus long terme.</p>
-      <label class="print-toggle"><input type="checkbox" id="include-vision-print"> Inclure cette section à l'impression pour cette rencontre</label>
     </div>
     <p class="scale-legend">Même échelle : <strong>1</strong> pas intéressant · <strong>2</strong> utile · <strong>3</strong> très utile · <strong>4</strong> incontournable.</p>
     <ol class="feature-list vision" id="list-av"></ol>
@@ -501,7 +491,7 @@
     </label>
 
     <div class="actions no-print">
-      <button class="btn" id="btn-summary" type="button">Générer le résumé de la rencontre</button>
+      <button class="btn" id="btn-summary" type="button">Soumettre ma fiche de perception</button>
       <button class="btn secondary" id="btn-print" type="button">Imprimer / Enregistrer en PDF</button>
     </div>
 
@@ -645,11 +635,10 @@
 
   // QR code — pointe vers l'URL réelle de cette page une fois déployée
   try {
-    document.getElementById("qr-url-text").textContent = PAGE_URL.replace(/^https?:\/\//, "");
     if (window.QRCode) {
       new QRCode(document.getElementById("qr-box"), {
         text: PAGE_URL,
-        width: 68, height: 68,
+        width: 56, height: 56,
         colorDark: "#0D2A4A",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.M
@@ -657,24 +646,20 @@
     }
   } catch (e) {}
 
-  // Tabs
-  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  // Stepper (sections)
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
   var panels = Array.prototype.slice.call(document.querySelectorAll(".tab-panel"));
-  tabs.forEach(function (tab) {
-    tab.addEventListener("click", function () {
-      tabs.forEach(function (t) { t.classList.remove("active"); });
+  steps.forEach(function (step) {
+    step.addEventListener("click", function () {
+      steps.forEach(function (s) {
+        if (s !== step && s.classList.contains("active")) s.classList.add("visited");
+        s.classList.remove("active");
+      });
       panels.forEach(function (p) { p.classList.remove("active"); });
-      tab.classList.add("active");
-      document.getElementById(tab.dataset.tab).classList.add("active");
+      step.classList.add("active");
+      step.classList.remove("visited");
+      document.getElementById(step.dataset.tab).classList.add("active");
     });
-  });
-
-  // Vision print toggle
-  var visionPanel = document.getElementById("tab-vision");
-  var visionToggle = document.getElementById("include-vision-print");
-  visionPanel.classList.add("print-off");
-  visionToggle.addEventListener("change", function () {
-    visionPanel.classList.toggle("print-off", !visionToggle.checked);
   });
 
   // Default date = today
@@ -778,7 +763,7 @@
     cols.push(document.getElementById("f-date").value || "");
     cols.push(document.getElementById("f-org").value.trim());
     cols.push(document.getElementById("f-contact").value.trim());
-    cols.push(document.getElementById("f-taille").value);
+    cols.push(""); // Volume approximatif de contrats / an — question retirée de la fiche ; colonne conservée pour l'alignement avec la grille Excel
     AP.forEach(function (item) {
       var checked = document.querySelector('input[name="rate-' + item[0] + '"]:checked');
       cols.push(checked ? checked.value : "");
