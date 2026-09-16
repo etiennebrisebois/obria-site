@@ -522,6 +522,9 @@
   // d'écrire l'URL en dur comme sur claude.ai : on la lit directement dans le navigateur.
   // Ça évite d'avoir à revenir modifier ce fichier si l'adresse change un jour.
   var PAGE_URL = window.location.href.split("?")[0].split("#")[0];
+  // Adresse de l'application Web Google Apps Script qui reçoit chaque fiche
+  // et l'ajoute comme nouvelle ligne dans le Google Sheet de collecte.
+  var SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbzUgCLo1T5BOi9dgJmTHzYEpACu5XCm8Po54htlDnFengv8aR1KkpgG7SKqikT5KkT_FQ/exec";
   var AP = [
     ["AP01","Portrait en temps réel du marché public québécois","Montants octroyés, nouveaux avis et contrats, mis à jour chaque semaine à partir du SEAO."],
     ["AP02","Recherche et filtres avancés","Filtrer par région, catégorie, organisme ou fournisseur, avec des résultats partageables par lien."],
@@ -720,6 +723,31 @@
     return lines.join("\n");
   }
 
+  // Construit la ligne (tableau ordonné) envoyée au Google Sheet — même ordre
+  // que les en-têtes de colonnes du Sheet (Horodatage est ajouté par le script
+  // Apps Script lui-même, donc on ne le répète pas ici).
+  function buildRowArray() {
+    var cols = [];
+    cols.push(document.getElementById("f-date").value || "");
+    cols.push(document.getElementById("f-org").value.trim());
+    cols.push(document.getElementById("f-contact").value.trim());
+    AP.forEach(function (item) {
+      var checked = document.querySelector('input[name="rate-' + item[0] + '"]:checked');
+      cols.push(checked ? checked.value : "");
+    });
+    AV.forEach(function (item) {
+      var checked = document.querySelector('input[name="rate-' + item[0] + '"]:checked');
+      cols.push(checked ? checked.value : "");
+    });
+    cols.push(priOrder[0] || "");
+    cols.push(priOrder[1] || "");
+    cols.push(priOrder[2] || "");
+    cols.push(document.getElementById("f-irritant").value.trim());
+    cols.push(document.getElementById("f-pilote").value);
+    cols.push(document.getElementById("f-commentaires").value.trim());
+    return cols;
+  }
+
   document.getElementById("btn-summary").addEventListener("click", function () {
     var text = buildSummary();
     document.getElementById("summary-content").textContent = text;
@@ -732,6 +760,27 @@
     var mailBody = text.length > 1500 ? text.slice(0, 1500) + "\n\n[Résumé tronqué — voir le texte complet copié depuis la page]" : text;
     var mailto = "mailto:etienne.brisebois@obria.ca?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(mailBody);
     document.getElementById("mailto-link").href = mailto;
+
+    // Envoi automatique vers le Google Sheet de collecte.
+    // mode "no-cors" est requis pour parler à Apps Script depuis une page
+    // statique, mais ça veut dire qu'on ne peut pas lire la vraie réponse du
+    // serveur (succès ou erreur côté Sheet) — seulement si la requête est
+    // partie. Le résumé local (copier / courriel) reste donc le filet de
+    // sécurité en cas de doute ou de connexion instable pendant une rencontre.
+    try {
+      fetch(SHEET_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ row: buildRowArray() })
+      }).then(function () {
+        showToast("Fiche envoyée");
+      }).catch(function () {
+        showToast("Envoi automatique échoué — utilisez « Copier » ou le courriel ci-dessous");
+      });
+    } catch (e) {
+      showToast("Envoi automatique échoué — utilisez « Copier » ou le courriel ci-dessous");
+    }
   });
 
   function showToast(msg) {
