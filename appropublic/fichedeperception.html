@@ -499,7 +499,8 @@
       <h2>Résumé de la rencontre</h2>
       <div id="summary-content"></div>
       <div class="actions">
-        <a class="btn" id="mailto-link" href="#">Envoyer par courriel à Obria</a>
+        <button class="btn" id="btn-confirm-send" type="button">Confirmer et envoyer à Obria</button>
+        <a class="btn secondary" id="mailto-link" href="#">Envoyer par courriel à Obria</a>
         <button class="btn secondary" id="btn-copy" type="button">Copier le résumé</button>
         <button class="btn secondary" id="btn-copy-xlsx" type="button">Copier pour Excel (1 ligne)</button>
       </div>
@@ -761,12 +762,29 @@
     var mailto = "mailto:etienne.brisebois@obria.ca?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(mailBody);
     document.getElementById("mailto-link").href = mailto;
 
-    // Envoi automatique vers le Google Sheet de collecte.
+    // Chaque fois qu'un nouveau résumé est généré, on réactive le bouton de
+    // confirmation — l'envoi réel ne se déclenche que si la personne clique
+    // dessus, après avoir relu son résumé.
+    var confirmBtn = document.getElementById("btn-confirm-send");
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = "Confirmer et envoyer à Obria";
+  });
+
+  document.getElementById("btn-confirm-send").addEventListener("click", function () {
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = "Envoi en cours…";
+
     // mode "no-cors" est requis pour parler à Apps Script depuis une page
     // statique, mais ça veut dire qu'on ne peut pas lire la vraie réponse du
     // serveur (succès ou erreur côté Sheet) — seulement si la requête est
-    // partie. Le résumé local (copier / courriel) reste donc le filet de
-    // sécurité en cas de doute ou de connexion instable pendant une rencontre.
+    // partie. La vraie confirmation, c'est le courriel automatique que le
+    // script envoie à Obria pour chaque fiche reçue (voir Apps Script).
+    function onFail() {
+      btn.disabled = false;
+      btn.textContent = "Confirmer et envoyer à Obria";
+      showToast("Échec de l'envoi — réessayez, ou utilisez le courriel ci-dessous");
+    }
     try {
       fetch(SHEET_ENDPOINT, {
         method: "POST",
@@ -774,12 +792,11 @@
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ row: buildRowArray() })
       }).then(function () {
+        btn.textContent = "✓ Fiche envoyée";
         showToast("Fiche envoyée");
-      }).catch(function () {
-        showToast("Envoi automatique échoué — utilisez « Copier » ou le courriel ci-dessous");
-      });
+      }).catch(onFail);
     } catch (e) {
-      showToast("Envoi automatique échoué — utilisez « Copier » ou le courriel ci-dessous");
+      onFail();
     }
   });
 
