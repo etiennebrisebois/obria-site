@@ -118,13 +118,6 @@
     border-bottom: 2px solid var(--ink);
     margin-bottom: 24px;
   }
-  .masthead-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
   .logo-lockup { display: flex; align-items: center; gap: 10px; }
   .brandmark { flex: none; width: 44px; height: 44px; display: block; }
   .logo-word {
@@ -134,16 +127,6 @@
     letter-spacing: -0.01em;
     color: var(--ink);
   }
-  #qr-box {
-    flex: none;
-    width: 64px; height: 64px;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 4px;
-    box-shadow: var(--shadow);
-  }
-  #qr-box img, #qr-box canvas, #qr-box table { width: 100% !important; height: 100% !important; }
   .eyebrow {
     margin: 0 0 4px;
     font-size: 12px;
@@ -307,6 +290,13 @@
   .vision-banner p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
   .vision-banner strong { color: var(--sarcelle); }
 
+  /* ---------- Section navigation (boutons "Suivant") ---------- */
+  .section-nav {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+  }
+
   /* ---------- Conclusion ---------- */
   .tab-panel h2 { font-size: 18px; margin: 22px 0 6px; }
   .tab-panel h2:first-child { margin-top: 0; }
@@ -361,6 +351,7 @@
   button.btn.secondary, a.btn.secondary {
     background: var(--surface); color: var(--ink); border-color: var(--border);
   }
+  button.btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .summary-panel {
     margin-top: 20px;
@@ -382,15 +373,6 @@
     color: var(--ink-soft);
     margin-bottom: 12px;
   }
-  .summary-note { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
-
-  .page-footer {
-    margin-top: 32px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-    font-size: 11.5px;
-    color: var(--muted);
-  }
 
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -410,7 +392,6 @@
     .tab-panel { display: block !important; page-break-before: always; }
     .tab-panel:first-of-type { page-break-before: avoid; }
     .feature, .meta-card, .summary-panel { box-shadow: none; break-inside: avoid; }
-    a.btn { display: none !important; }
   }
 </style>
 </head>
@@ -418,12 +399,9 @@
 <div class="page">
 
   <header class="masthead">
-    <div class="masthead-top">
-      <div class="logo-lockup">
-        <img class="brandmark" src="img/logo.png" alt="ApproPublic" width="44" height="44">
-        <span class="logo-word">ApproPublic</span>
-      </div>
-      <div id="qr-box" role="img" aria-label="Code QR vers cette page"></div>
+    <div class="logo-lockup">
+      <img class="brandmark" src="img/logo.png" alt="ApproPublic" width="44" height="44">
+      <span class="logo-word">ApproPublic</span>
     </div>
     <div class="masthead-title">
       <p class="eyebrow">Obria Solutions</p>
@@ -458,6 +436,9 @@
   <section id="tab-fiche" class="tab-panel active">
     <p class="scale-legend">Pour chaque fonctionnalité, indiquez le niveau d'intérêt perçu : <strong>1</strong> pas intéressant · <strong>2</strong> utile · <strong>3</strong> très utile · <strong>4</strong> incontournable. Une note est facultative.</p>
     <ol class="feature-list" id="list-ap"></ol>
+    <div class="section-nav no-print">
+      <button class="btn" data-goto="tab-vision" type="button">Suivant : Vision Apprové →</button>
+    </div>
   </section>
 
   <section id="tab-vision" class="tab-panel">
@@ -466,6 +447,9 @@
     </div>
     <p class="scale-legend">Même échelle : <strong>1</strong> pas intéressant · <strong>2</strong> utile · <strong>3</strong> très utile · <strong>4</strong> incontournable.</p>
     <ol class="feature-list vision" id="list-av"></ol>
+    <div class="section-nav no-print">
+      <button class="btn" data-goto="tab-conclusion" type="button">Suivant : Priorités et conclusion →</button>
+    </div>
   </section>
 
   <section id="tab-conclusion" class="tab-panel">
@@ -492,7 +476,6 @@
 
     <div class="actions no-print">
       <button class="btn" id="btn-summary" type="button">Soumettre ma fiche de perception</button>
-      <button class="btn secondary" id="btn-print" type="button">Imprimer / Enregistrer en PDF</button>
     </div>
 
     <div class="summary-panel no-print" id="summary-panel" hidden>
@@ -500,31 +483,17 @@
       <div id="summary-content"></div>
       <div class="actions">
         <button class="btn" id="btn-confirm-send" type="button">Confirmer et envoyer à Obria</button>
-        <a class="btn secondary" id="mailto-link" href="#">Envoyer par courriel à Obria</a>
-        <button class="btn secondary" id="btn-copy" type="button">Copier le résumé</button>
-        <button class="btn secondary" id="btn-copy-xlsx" type="button">Copier pour Excel (1 ligne)</button>
+        <button class="btn secondary" id="btn-print" type="button">Imprimer / Enregistrer en PDF</button>
       </div>
-      <p class="summary-note">Le lien courriel peut tronquer les réponses très longues (limite technique des liens « mailto »). Utilisez « Copier le résumé » pour coller le texte complet dans un courriel si besoin.</p>
-      <p class="summary-note">« Copier pour Excel » copie une ligne prête à coller dans la première cellule vide de l'onglet <strong>Saisie</strong> de la grille de compilation — les colonnes se remplissent automatiquement.</p>
     </div>
   </section>
 
-  <footer class="page-footer">
-    <p>ApproPublic — Obria Solutions · Document confidentiel de découverte client · <span id="footer-date"></span></p>
-  </footer>
 </div>
 
 <div class="toast no-print" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function () {
-  // Cette page se déploie à une adresse réelle (obria.ca), donc on n'a plus besoin
-  // d'écrire l'URL en dur comme sur claude.ai : on la lit directement dans le navigateur.
-  // Ça évite d'avoir à revenir modifier ce fichier si l'adresse change un jour.
-  var PAGE_URL = window.location.href.split("?")[0].split("#")[0];
-  // Adresse de l'application Web Google Apps Script qui reçoit chaque fiche
-  // et l'ajoute comme nouvelle ligne dans le Google Sheet de collecte.
   var SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbzUgCLo1T5BOi9dgJmTHzYEpACu5XCm8Po54htlDnFengv8aR1KkpgG7SKqikT5KkT_FQ/exec";
   var AP = [
     ["AP01","Portrait en temps réel du marché public québécois","Montants octroyés, nouveaux avis et contrats, mis à jour chaque semaine à partir du SEAO."],
@@ -532,21 +501,21 @@
     ["AP03","Fiches détaillées avec historique complet","Portrait complet d'un avis, d'un contrat, d'un organisme ou d'un fournisseur, incluant son historique."],
     ["AP04","Détection automatique des anomalies de conformité SEAO","Repérage des délais non respectés, données manquantes ou avis non clôturés."],
     ["AP05","Tableau de bord de gouvernance personnalisé","Un coup d'œil hebdomadaire sur la situation de votre organisation : indicateurs clés et tendances."],
-    ["AP06","Centre d'alertes et notifications proactives","Alertes par courriel et dans l'application dès qu'une situation mérite votre attention."],
-    ["AP07","Suivi des contrats à échéance et des renouvellements","Visibilité sur les contrats qui se terminent dans les 6 à 12 prochains mois."],
-    ["AP08","Indicateurs de qualité de la concurrence","Nombre de soumissionnaires par appel d'offres, taux d'annulation, appels sans concurrence."],
-    ["AP09","Suivi de la dérive budgétaire et des amendements","Écart entre le montant octroyé et le montant final, motifs d'amendement classés automatiquement."],
-    ["AP10","Comparaison avec des organismes similaires","Votre organisation comparée à des pairs de même type : rang, percentile, tendances."],
-    ["AP11","Suivi de l'achat local et de la diversification","Taux d'achat local, répartition géographique et concentration des fournisseurs."],
-    ["AP12","Analyses de marché générées par IA","Dossiers d'aide à la décision générés automatiquement à partir des données disponibles."],
-    ["AP13","Vitrine — besoins à venir et fournisseurs innovants","Publier vos besoins futurs pour attirer des fournisseurs et des solutions innovantes."]
+    ["AP06","Suivi des contrats à échéance et des renouvellements","Visibilité sur les contrats qui se terminent dans les 6 à 12 prochains mois."],
+    ["AP07","Indicateurs de qualité de la concurrence","Nombre de soumissionnaires par appel d'offres, taux d'annulation, appels sans concurrence."],
+    ["AP08","Comparaison avec des organismes similaires","Votre organisation comparée à des pairs de même type : rang, percentile, tendances."],
+    ["AP09","Suivi de l'achat local et de la diversification","Taux d'achat local, répartition géographique et concentration des fournisseurs."],
+    ["AP10","Analyses de marché générées par IA","Dossiers d'aide à la décision générés automatiquement à partir des données disponibles."],
+    ["AP11","Vitrine - Innovations des fournisseurs","Consulter des solutions innovantes de fournisseurs en fonction des catégories d'achats."],
+    ["AP12","Vitrine - Besoins à venir des organismes publics","Publier des besoins futurs planifiés, pour informer le marché et pour identifier des regroupements potentiels."]
   ];
   var AV = [
     ["AV01","Gestion complète du cycle de vie contractuel","De la planification à la clôture, dans un seul environnement."],
-    ["AV02","Suivi budgétaire en temps réel de l'exécution","Suivre les dépenses réelles d'un contrat au fil de son exécution."],
-    ["AV03","Planification annuelle des besoins","Structurer et documenter vos orientations d'achat pour l'année à venir."],
-    ["AV04","Outils de gouvernance et reddition de comptes","Automatiser la production des redditions de comptes liées aux marchés publics."],
-    ["AV05","Plateforme unifiée : intelligence de marché + gestion opérationnelle","Relier les données de marché d'ApproPublic à la gestion quotidienne de vos contrats."]
+    ["AV02","Planification annuelle des besoins","Structurer et documenter vos orientations d'achat pour l'année à venir."],
+    ["AV03","Validation du respect du cadre législatif en gestion contractuelle","Intégrer des points de contrôle pour le respect des obligations d'un organisme public en matière de gestion contractuelle."],
+    ["AV04","Suivi budgétaire en temps réel de l'exécution","Suivre les dépenses réelles d'un contrat au fil de son exécution."],
+    ["AV05","Outils de gouvernance et reddition de comptes","Automatiser la production des redditions de comptes liées aux marchés publics."],
+    ["AV06","Plateforme unifiée : intelligence de marché + gestion opérationnelle","Relier les données de marché d'ApproPublic à la gestion quotidienne de vos contrats."]
   ];
   var SCALE = [["1","Pas intéressant"],["2","Utile"],["3","Très utile"],["4","Incontournable"]];
 
@@ -637,32 +606,40 @@
     });
   });
 
-  // QR code — pointe vers l'URL réelle de cette page une fois déployée
-  try {
-    if (window.QRCode) {
-      new QRCode(document.getElementById("qr-box"), {
-        text: PAGE_URL,
-        width: 56, height: 56,
-        colorDark: "#0D2A4A",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    }
-  } catch (e) {}
-
-  // Stepper (sections)
+  // Stepper (sections) — logique de changement de section centralisée, réutilisée
+  // par les puces du haut ET par les boutons "Suivant" en bas de chaque section.
   var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
   var panels = Array.prototype.slice.call(document.querySelectorAll(".tab-panel"));
+  var stepperNav = document.querySelector(".stepper");
+
+  function activateTab(tabId) {
+    steps.forEach(function (s) {
+      if (s.classList.contains("active") && s.dataset.tab !== tabId) s.classList.add("visited");
+      s.classList.remove("active");
+    });
+    panels.forEach(function (p) { p.classList.remove("active"); });
+    var targetStep = steps.filter(function (s) { return s.dataset.tab === tabId; })[0];
+    if (targetStep) {
+      targetStep.classList.add("active");
+      targetStep.classList.remove("visited");
+    }
+    var targetPanel = document.getElementById(tabId);
+    if (targetPanel) targetPanel.classList.add("active");
+    // Fait remonter la vue sur l'indicateur d'étapes + le début de la nouvelle
+    // section, pour éviter à la personne de remonter manuellement en haut de
+    // la page après un clic sur un bouton "Suivant".
+    if (stepperNav) stepperNav.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   steps.forEach(function (step) {
     step.addEventListener("click", function () {
-      steps.forEach(function (s) {
-        if (s !== step && s.classList.contains("active")) s.classList.add("visited");
-        s.classList.remove("active");
-      });
-      panels.forEach(function (p) { p.classList.remove("active"); });
-      step.classList.add("active");
-      step.classList.remove("visited");
-      document.getElementById(step.dataset.tab).classList.add("active");
+      activateTab(step.dataset.tab);
+    });
+  });
+
+  Array.prototype.slice.call(document.querySelectorAll("[data-goto]")).forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      activateTab(btn.dataset.goto);
     });
   });
 
@@ -670,7 +647,6 @@
   try {
     var today = new Date();
     document.getElementById("f-date").value = today.toISOString().slice(0, 10);
-    document.getElementById("footer-date").textContent = today.toLocaleDateString("fr-CA", { year: "numeric", month: "long", day: "numeric" });
   } catch (e) {}
 
   // Print
@@ -756,12 +732,6 @@
     panel.hidden = false;
     panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
-    var org = document.getElementById("f-org").value.trim() || "organisme";
-    var subject = "Réponses ApproPublic — " + org;
-    var mailBody = text.length > 1500 ? text.slice(0, 1500) + "\n\n[Résumé tronqué — voir le texte complet copié depuis la page]" : text;
-    var mailto = "mailto:etienne.brisebois@obria.ca?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(mailBody);
-    document.getElementById("mailto-link").href = mailto;
-
     // Chaque fois qu'un nouveau résumé est généré, on réactive le bouton de
     // confirmation — l'envoi réel ne se déclenche que si la personne clique
     // dessus, après avoir relu son résumé.
@@ -778,12 +748,12 @@
     // mode "no-cors" est requis pour parler à Apps Script depuis une page
     // statique, mais ça veut dire qu'on ne peut pas lire la vraie réponse du
     // serveur (succès ou erreur côté Sheet) — seulement si la requête est
-    // partie. La vraie confirmation, c'est le courriel automatique que le
-    // script envoie à Obria pour chaque fiche reçue (voir Apps Script).
+    // partie. Le Google Sheet reste la source de vérité pour confirmer
+    // qu'une réponse est bien arrivée.
     function onFail() {
       btn.disabled = false;
       btn.textContent = "Confirmer et envoyer à Obria";
-      showToast("Échec de l'envoi — réessayez, ou utilisez le courriel ci-dessous");
+      showToast("Échec de l'envoi — réessayez dans un instant");
     }
     try {
       fetch(SHEET_ENDPOINT, {
@@ -806,59 +776,6 @@
     t.classList.add("show");
     setTimeout(function () { t.classList.remove("show"); }, 1800);
   }
-
-  document.getElementById("btn-copy").addEventListener("click", function () {
-    var text = document.getElementById("summary-content").textContent;
-    try {
-      navigator.clipboard.writeText(text).then(function () {
-        showToast("Résumé copié");
-      }, function () {
-        showToast("Impossible de copier automatiquement");
-      });
-    } catch (e) {
-      showToast("Impossible de copier automatiquement");
-    }
-  });
-
-  function tsvField(v) {
-    return String(v == null ? "" : v).replace(/\t/g, " ").replace(/\r?\n/g, " ⏎ ");
-  }
-
-  function buildExcelRow() {
-    var cols = [];
-    cols.push(document.getElementById("f-date").value || "");
-    cols.push(document.getElementById("f-org").value.trim());
-    cols.push(document.getElementById("f-contact").value.trim());
-    cols.push(""); // Volume approximatif de contrats / an — question retirée de la fiche ; colonne conservée pour l'alignement avec la grille Excel
-    AP.forEach(function (item) {
-      var checked = document.querySelector('input[name="rate-' + item[0] + '"]:checked');
-      cols.push(checked ? checked.value : "");
-    });
-    AV.forEach(function (item) {
-      var checked = document.querySelector('input[name="rate-' + item[0] + '"]:checked');
-      cols.push(checked ? checked.value : "");
-    });
-    cols.push(priOrder[0] || "");
-    cols.push(priOrder[1] || "");
-    cols.push(priOrder[2] || "");
-    cols.push(document.getElementById("f-irritant").value.trim());
-    cols.push(document.getElementById("f-pilote").value);
-    cols.push(document.getElementById("f-commentaires").value.trim());
-    return cols.map(tsvField).join("\t");
-  }
-
-  document.getElementById("btn-copy-xlsx").addEventListener("click", function () {
-    var row = buildExcelRow();
-    try {
-      navigator.clipboard.writeText(row).then(function () {
-        showToast("Ligne copiée — collez-la dans l'onglet Saisie");
-      }, function () {
-        showToast("Impossible de copier automatiquement");
-      });
-    } catch (e) {
-      showToast("Impossible de copier automatiquement");
-    }
-  });
 })();
 </script>
 </body>
