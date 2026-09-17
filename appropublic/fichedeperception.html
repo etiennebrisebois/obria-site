@@ -722,6 +722,16 @@
     cols.push(document.getElementById("f-irritant").value.trim());
     cols.push(document.getElementById("f-pilote").value);
     cols.push(document.getElementById("f-commentaires").value.trim());
+    // Regroupe toutes les notes facultatives (une par fonctionnalité) dans une
+    // seule colonne, chacune identifiée par le titre de la fonctionnalité —
+    // évite de doubler le nombre de colonnes du Sheet avec une colonne de note
+    // par question.
+    var noteParts = [];
+    ALL.forEach(function (item) {
+      var note = document.getElementById("note-" + item[0]).value.trim();
+      if (note) noteParts.push(item[1] + " : " + note);
+    });
+    cols.push(noteParts.join(" | "));
     return cols;
   }
 
